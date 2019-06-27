@@ -9,8 +9,8 @@ import com.yyytiger.question_generator.calculator.impl.PlusCalculatorImpl;
 import com.yyytiger.question_generator.model.IntegerCalculateResult;
 
 public enum IntegerOperator {
-    PLUS("+", new PlusCalculatorImpl()),
-    MINUS("-", new MinusCalculatorImpl()),
+    PLUS("＋", new PlusCalculatorImpl()),
+    MINUS("－", new MinusCalculatorImpl()),
     MULTI("×", new MultiCalculatorImpl()),
     DIVIDE("÷", new DivideCalculatorImpl());
 
