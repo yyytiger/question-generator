@@ -4,11 +4,13 @@ import com.yyytiger.question_generator.generator.QuestionGenerator;
 import com.yyytiger.question_generator.generator.impl.MixedTypesQuestionListGeneratorImpl;
 import com.yyytiger.question_generator.operator.IntegerOperator;
 import com.yyytiger.question_generator.printer.QuestionsPrinter;
-import com.yyytiger.question_generator.printer.impl.ConsoleQuestionsPrinter;
+import com.yyytiger.question_generator.printer.impl.PlainTextQuestionsPrinter;
 import com.yyytiger.question_generator.question.Question;
 import com.yyytiger.question_generator.question.impl.integer.NDigitsOpMDigitsQuestionImpl;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,7 +63,8 @@ public class App
         MixedTypesQuestionListGeneratorImpl generator = new MixedTypesQuestionListGeneratorImpl(100, questionGenerators);
         List<Question> questions = generator.generateQuestions();
 
-        QuestionsPrinter printer = new ConsoleQuestionsPrinter(4);
+        String filePath = String.format("D:\\questions\\questions_%s.txt", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+        QuestionsPrinter printer = new PlainTextQuestionsPrinter(filePath, 4);
         printer.print(questions);
     }
 }
