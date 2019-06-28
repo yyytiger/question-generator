@@ -10,16 +10,15 @@ import java.io.FileWriter;
 import java.util.List;
 
 public class PlainTextQuestionsPrinter implements QuestionsPrinter {
+    private static final int Columns = 4;
     private static final int LineWidth = 80;
     private static final int PageHeight = 51;
     private static final int RowLines = 10;
-    private int columns;
     private String filePath;
     private String lineSeparator = System.getProperty("line.separator");
 
-    public PlainTextQuestionsPrinter(String filePath, int columns){
+    public PlainTextQuestionsPrinter(String filePath){
         this.filePath = filePath;
-        this.columns = columns;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class PlainTextQuestionsPrinter implements QuestionsPrinter {
 
         int columnIndex = 0;
         int lineIndex = 0;
-        int columnWidth = LineWidth / columns;
+        int columnWidth = LineWidth / Columns;
         for (Question question : questions) {
             String text = question.getQuestionText();
             buffer.append(text);
@@ -36,7 +35,7 @@ public class PlainTextQuestionsPrinter implements QuestionsPrinter {
             printSpaces(buffer, columnWidth - text.length());
             columnIndex++;
 
-            if (columnIndex == columns) {
+            if (columnIndex == Columns) {
                 columnIndex = 0;
                 printLines(buffer, RowLines);
                 lineIndex += RowLines;
