@@ -11,12 +11,7 @@ import org.junit.Test;
 public class SingleTypeQuestionListGeneratorImplTest {
     @Test
     public void testTwoMultiThree(){
-        QuestionGenerator questionGenerator = new QuestionGenerator() {
-            @Override
-            public Question generateQuestion() {
-                return new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 3);
-            }
-        };
+        QuestionGenerator questionGenerator = () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 3);
 
         SingleTypeQuestionListGeneratorImpl generator = new SingleTypeQuestionListGeneratorImpl(10, questionGenerator);
         Helper.printQuestions(generator.generateQuestions());
