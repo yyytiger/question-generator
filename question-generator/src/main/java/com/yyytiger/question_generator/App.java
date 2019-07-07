@@ -11,21 +11,27 @@ import com.yyytiger.question_generator.printer.impl.PdfQuestionsPrinter;
 import com.yyytiger.question_generator.printer.impl.PlainTextQuestionsPrinter;
 import com.yyytiger.question_generator.question.Question;
 import com.yyytiger.question_generator.question.impl.integer.NDigitsOpMDigitsQuestionImpl;
+import com.yyytiger.question_generator.question.impl.integer.NoRemainderDivideQuestionImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
     private static final String FolderPath = "D:\\questions\\";
-    public static void main( String[] args )
-    {
+    private static int DocumentCount = 10;
+
+    public static void main( String[] args ) throws InterruptedException {
+        for (int i = 0; i < DocumentCount; i++) {
+            generateDocument();
+            Thread.sleep(1000);
+        }
+    }
+
+    private static void generateDocument(){
         //QuestionListGenerator generator = getMixedTypesGenerator(50);
         QuestionListGenerator generator = getWeighedTypesGenerator(50);
         List<Question> questions = generator.generateQuestions();
@@ -37,32 +43,42 @@ public class App
 
     private static QuestionListGenerator getWeighedTypesGenerator(int questionCount){
         List<QuestionGeneratorWeightDecorator> decorators = Arrays.asList(
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 3, 2), 2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 2), 2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 3, 2),2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 4, 2),2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 4, 3),2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 3, 3),2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 4, 3),2),
-                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 3, 3),2)
+                //Plus
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 4, 3),5),
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 3, 3),5),
+                //Minus
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 4, 3),5),
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 3, 3),5),
+                //Multi
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 3, 2), 10),
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 2), 10),
+                //Divide
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 4, 2),6),
+                createDecorator(() -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 3, 2),6),
+                createDecorator(() -> new NoRemainderDivideQuestionImpl(2, 3),4),
+                createDecorator(() -> new NoRemainderDivideQuestionImpl(2, 2),4)
         );
-        QuestionListGenerator generator = new WeighedTypesQuestionListGeneratorImpl(questionCount, decorators);
-        return generator;
+        return new WeighedTypesQuestionListGeneratorImpl(questionCount, decorators);
     }
 
     private static QuestionListGenerator getMixedTypesGenerator(int questionCount){
         List<QuestionGenerator> questionGenerators = Arrays.asList(
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 3, 2),
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 2),
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 3, 2),
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 4, 2),
+                //Plus
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 4, 3),
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 3, 3),
+                //Minus
                 () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 4, 3),
                 () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MINUS, 3, 3),
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 4, 3),
-                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.PLUS, 3, 3)
+                //Multi
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 3, 2),
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.MULTI, 2, 2),
+                //Divide
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 3, 2),
+                () -> new NDigitsOpMDigitsQuestionImpl(IntegerOperator.DIVIDE, 4, 2),
+                () -> new NoRemainderDivideQuestionImpl(2, 3),
+                () -> new NoRemainderDivideQuestionImpl(2, 2)
         );
-        QuestionListGenerator generator = new MixedTypesQuestionListGeneratorImpl(questionCount, questionGenerators);
-        return generator;
+        return new MixedTypesQuestionListGeneratorImpl(questionCount, questionGenerators);
     }
 
     private static QuestionGeneratorWeightDecorator createDecorator(QuestionGenerator questionGenerator, int weight){
@@ -72,16 +88,14 @@ public class App
     private static QuestionsPrinter getPlainTextPrinter(){
         String fileName = getFileName();
         String filePath = String.format(FolderPath + "%s.txt", fileName);
-        QuestionsPrinter printer = new PlainTextQuestionsPrinter(filePath);
-        return printer;
+        return new PlainTextQuestionsPrinter(filePath);
     }
 
     private static QuestionsPrinter getPdfPrinter() {
         String fileName = getFileName();
         String questionFilePath = String.format(FolderPath + "%s_questions.pdf", fileName);
         String awswerFilePath = String.format(FolderPath + "%s_answers.pdf", fileName);
-        QuestionsPrinter printer = new PdfQuestionsPrinter(questionFilePath, awswerFilePath);
-        return printer;
+        return new PdfQuestionsPrinter(questionFilePath, awswerFilePath);
     }
 
     private static String getFileName(){

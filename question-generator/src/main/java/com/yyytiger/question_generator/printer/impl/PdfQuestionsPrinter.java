@@ -153,7 +153,6 @@ public class PdfQuestionsPrinter implements QuestionsPrinter {
     }
 
     private Phrase createPhrase(String text, int fontSize, int fontStyle) {
-        Phrase phrase = new Phrase(text, new Font(this.baseFont, fontSize, fontStyle));
-        return phrase;
+        return new Phrase(text, new Font(this.baseFont, fontSize, fontStyle));
     }
 }
